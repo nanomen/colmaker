@@ -1,0 +1,17 @@
+.b {
+	margin: 20px 0;
+	overflow: hidden;
+	clear:both;
+}
+
+.b__col {
+	width: 25%;
+	float: left;
+}
+
+.b__item {
+	margin: 3px;
+	padding: 3px;
+	height: 20px;
+	background-color: #C1CFD4;
+}

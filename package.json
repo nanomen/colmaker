@@ -1,0 +1,16 @@
+{
+  "name": "colmaker",
+  "version": "0.1.0",
+  "description": "jQuery Plugin for create multi-columns list elements",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "mr.lozchka",
+  "license": "ISC",
+  "dependencies": {
+  	"gulp": "latest",
+    "gulp-rename": "latest",
+  	"gulp-uglify": "latest"
+  }
+}

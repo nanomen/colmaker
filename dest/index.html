@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Colmaker demo</title>
+
+	<link href="css/style.css" rel="stylesheet">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<script src="js/colmaker.jquery.js"></script>
+</head>
+<body>
+
+<!-- Вариант сортировки в линию -->
+<div class="b b1 b__list">
+	<div class="b__item">1</div>
+	<div class="b__item">2</div>
+	<div class="b__item">3</div>
+	<div class="b__item">4</div>
+	<div class="b__item">5</div>
+	<div class="b__item">6</div>
+	<div class="b__item">7</div>
+	<div class="b__item">8</div>
+	<div class="b__item">9</div>
+	<div class="b__item">10</div>
+</div>
+<!-- /Вариант сортировки в линию -->
+
+<!-- Вариант сортировки змейкой -->
+<div class="b b2 b__list">
+	<div class="b__item">1</div>
+	<div class="b__item">2</div>
+	<div class="b__item">3</div>
+	<div class="b__item">4</div>
+	<div class="b__item">5</div>
+	<div class="b__item">6</div>
+	<div class="b__item">7</div>
+	<div class="b__item">8</div>
+	<div class="b__item">9</div>
+	<div class="b__item">10</div>
+</div>
+<!-- /Вариант сортировки змейкой -->
+
+<script>
+$(function(){
+
+	// init colmaker
+	
+	$('.b1').colmaker({
+		type: 'line'
+	});
+
+	$('.b2').colmaker();
+
+});
+</script>
+</body>
+</html>
