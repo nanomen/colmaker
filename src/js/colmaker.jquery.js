@@ -1,13 +1,12 @@
 /*
- * @author mr.lozchka
- * @version 0.1.0
- *
  * Плагин создания колонок из списка
  *
  * Передаваемые настройки (объект):
  *
  * @type - тип сортировки элементов в колонках (по-умолчанию snake)
- * @size = количество колонок (по-умолчанию 2)
+ * @size - количество колонок (по-умолчанию 2)
+ * @ratio - коэффициент пропорциональности помещения элементов в колонку (по-умолчанию 50 на 50)
+ 			используется в методе сортировки userRatio
  * @colClasses - классы, которые добавятся к элементам колонок (по-умолчанию b__col)
  *				 можно передать несколько классов разделенных пробелом.
  *				 При этом класс по-умолчанию перезапишется	
@@ -23,6 +22,7 @@
 		defaults = {
 			type: 'snake',
 			size: 2,
+			ratio: '1:1',
 			colClasses: 'b__col'
 		};
 
@@ -159,6 +159,7 @@
 			// индекс с которого будем разбивать на блоки
 			// нужен, если сортировка змейкой
 			cutIndexStart = null,
+
 			// индекс до которого будем разбивать на блоки
 			// нужен, если сортировка змейкой
 			cutIndexEnd = null,
@@ -213,6 +214,7 @@
 
 			// хранилище будущих колонок
 			storage = [],
+
 			// временное хранилище элементов
 			storageBuffer = null,
 
@@ -256,8 +258,127 @@
 		}
 
 		return storage;
-
 	};
+
+	// Алгоритм слева - направо, сверху - вниз
+	Plugin.fn.userRatioTypeMakeCol = function() {
+
+		var $items = this.$items,
+			itemLength = this.$items.length,
+
+			// хранилище будущих колонок
+			storage = [],
+
+			// временное хранилище элементов
+			storageBuffer = null,
+
+			// Длина временного буфера
+			storageBufferLength = null,
+
+			// временный буффер для колонок
+			colFirstBuffer = [],
+			colSecondBuffer = [],
+
+			// параметры для итерации
+			// количество колонок
+			// преобразуем в массив
+			ratio = this.options.ratio.split(':'),
+
+			// Первый элемент коэффициента
+			ratioFirst = null,
+
+			// Первый элемент коэффициента в %
+			ratioFirstPersent = null,
+
+			// Второй элемент коэффициента
+			ratioSecond = null,
+
+			// Второй элемент коэффициента в %
+			ratioSecondPersent = null,
+
+			// СУмма процентов коэффициентов
+			ratioPersentSumm = null,
+
+			// Коэффициент пропорциональности
+			ratioValue = null,
+
+			// Сумма элементов для одного блока итерации
+			ratioSumm = null,
+
+			// Количество элементов для первой колонки
+			colFirstSizeEl = null,
+
+			// Количество элементов для второй колонки
+			colSecondSizeEl = null,
+
+			// Внутренний итератор элементов
+			//itemsIterator = 0,
+
+			// индекс с которого будем разбивать на блок
+			cutIndexStart = null,
+
+			// индекс до которого будем разбивать на блок
+			cutIndexEnd = null,
+
+			// Итератор цикла
+			iterator = 0;
+
+		// Обрабатываем пропорциональность
+		
+		//переводя строки в цифры через умножение на 1
+		ratioFirst = ratio[0]*1;
+		ratioSecond = ratio[1]*1;
+
+		// Получаем общую сумму элементов для одной итерации (сумма пропорциональности)
+		// Получаем сумму
+		ratioSumm = ratioFirst + ratioSecond;
+
+		// Итерируем с шагом, равным ratioSumm
+		for (; iterator < itemLength; iterator += ratioSumm) {
+
+			// Индекс с которого получаем блок элементов для разделения
+			cutIndexStart = iterator;
+
+			// Индекс до которого получаем блок
+			cutIndexEnd = cutIndexStart + ratioSumm;
+
+			// Получаем пачку элементов для разделения
+			storageBuffer = $items.slice(cutIndexStart, cutIndexEnd);
+
+				// Сложнейший расчет количества элементов в каждой колонке
+				// Определяем количество элементов, которое будем делить
+				storageBufferLength = storageBuffer.length;
+
+				// Определяем коэффициент пропорциональности
+				ratioValue = (ratioFirst / ratioSecond);
+
+				// Находим процент от каждого элемента пропорциональности
+				ratioFirstPersent = 100 * ratioValue;
+				ratioSecondPersent = 100;
+
+				// Получаем сумму процентов элементов пропорциональности
+				ratioPersentSumm = ratioFirstPersent + ratioSecondPersent;
+
+				// Находим количество элементов для второго столбца
+				colSecondSizeEl = Math.round(ratioSecondPersent * ratioSumm / ratioPersentSumm);
+
+				// Находим количество элементов для первого столбца
+				colFirstSizeEl = ratioSumm - colSecondSizeEl;
+
+			// Получаем элементы для первой колонки
+			//colFirstBuffer = colFirstBuffer.concat(storageBuffer.slice(0, ratioFirst).toArray());
+			colFirstBuffer = colFirstBuffer.concat(storageBuffer.slice(0, colFirstSizeEl).toArray());
+
+			// Получаем элементы для второй колонки
+			//colSecondBuffer = colSecondBuffer.concat(storageBuffer.slice(ratioFirst, cutIndexEnd).toArray());
+			colSecondBuffer = colSecondBuffer.concat(storageBuffer.slice(colFirstSizeEl, cutIndexEnd).toArray());
+		}
+
+		storage.push(this.appendToCol(colFirstBuffer));
+		storage.push(this.appendToCol(colSecondBuffer));
+
+		return storage;
+	},
 
 	// Помещаем элементы в контейнер колонки
 	Plugin.fn.appendToCol = function(elList) {
